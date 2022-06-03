@@ -4,11 +4,11 @@ import random
 import requests
 from pony.orm import db_session
 from vk_api import VkApi
-from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType, VkBotMessageEvent, VkBotEvent
 from vk_api.keyboard import VkKeyboard
 
 import handlers
-from utils import default_keyboard, get_commands_from_text, set_keyboard_buttons, compare_answer_to_user
+from utils import default_keyboard, get_commands_from_text, set_keyboard_buttons, form_answer_to_user
 from utils import user_state_exists, log, configure_logging
 from models import UserState, Registration
 from settings import SCENARIOS, INTENTS, DEFAULT_ANSWER, GROUP_ID, VK_BOT_TOKEN
@@ -34,7 +34,7 @@ class Bot:
                 log.exception(f'{exc} with event')
 
     @db_session
-    def event_handler(self, event) -> None:
+    def event_handler(self, event: VkBotMessageEvent | VkBotEvent) -> None:
         """Метод обрабатывает event:
         получает состояние пользователя в сценарии,
         реагирует на полученную команду или
@@ -207,8 +207,9 @@ class Bot:
                     self.start_scenario(user_id, scenario_name, user_name, text=command)
 
                 case '/cities' | '/routes':
-                    text_to_send = compare_answer_to_user(command)
-                    keyboard = set_keyboard_buttons(get_commands_from_text(text_to_send))
+                    text_to_send = form_answer_to_user(command)
+                    commands_from_text = get_commands_from_text(text_to_send)
+                    keyboard = set_keyboard_buttons(commands_from_text)
                     self.send_message(text_to_send, user_id, keyboard=keyboard.get_keyboard())
 
                 case '/restart':

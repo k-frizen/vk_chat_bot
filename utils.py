@@ -26,7 +26,7 @@ def configure_logging() -> None:
     log.addHandler(file_handler)
 
 
-def compare_answer_to_user(command: str) -> str:
+def form_answer_to_user(command: str) -> str:
     """Возвращает текст ответа для команды
 
     :param command: одна из команд бота (только '/cities' или '/routes')"""
