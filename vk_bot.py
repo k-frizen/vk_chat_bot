@@ -25,8 +25,6 @@ class Bot:
         self.long_poller = VkBotLongPoll(self.vk, self.group_id)
         self.api = self.vk.get_api()
 
-        self.commands = ('/ticket', '/help', '/cities', '/routes', '/restart')
-
     def run(self) -> None:
         """Запуск бота"""
         for event in self.long_poller.listen():

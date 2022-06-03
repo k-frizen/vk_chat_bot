@@ -1,11 +1,16 @@
 VK_BOT_TOKEN = ''
 GROUP_ID = 208934186
 PASSWORD = ''
+
 CITIES = ('Reykjavik', 'Oslo', 'Stockholm', 'Copenhagen', 'Torshavn')
+
 DATE_FORMAT = '%d/%m/%Y'
 TIME_FORMAT = '%H:%M'
+
 DATE_TIME_FORMAT = f'{DATE_FORMAT} {TIME_FORMAT}'
 TEST_TICKET_PATH = 'external_data/ticket/ticket_test.png'
+
+commands = ('/ticket', '/help', '/cities', '/routes', '/restart')
 
 INTENTS = [
     {

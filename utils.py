@@ -6,7 +6,7 @@ from vk_api.keyboard import VkKeyboardColor, VkKeyboard
 
 from generate_flights import ROUTES
 from models import UserState
-from settings import CITIES, DEFAULT_ANSWER, SCENARIOS, DATE_TIME_FORMAT, TIME_FORMAT
+from settings import CITIES, DEFAULT_ANSWER, SCENARIOS, DATE_TIME_FORMAT, TIME_FORMAT, commands
 
 log = logging.getLogger('bot')
 
@@ -70,7 +70,7 @@ def get_commands_from_text(text: str) -> tuple:
 
     :param text: текст, в котором будет производиться поиск
     :return: кортеж с командами из текста"""
-    return tuple(word for word in text.split() if word.startswith('/'))
+    return tuple(word for word in text.split() if word in commands)
 
 
 def default_keyboard() -> str:
