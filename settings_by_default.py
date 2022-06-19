@@ -1,14 +1,22 @@
+import os
+
 VK_BOT_TOKEN = ''
-GROUP_ID = 208934186
+GROUP_ID = 111
 PASSWORD = ''
 
 CITIES = ('Reykjavik', 'Oslo', 'Stockholm', 'Copenhagen', 'Torshavn')
 
+# Datetime format settings
 DATE_FORMAT = '%d/%m/%Y'
 TIME_FORMAT = '%H:%M'
-
 DATE_TIME_FORMAT = f'{DATE_FORMAT} {TIME_FORMAT}'
-TEST_TICKET_PATH = 'external_data/ticket/ticket_test.png'
+
+# Ticket settings
+TEST_TICKET_PATH = os.path.normpath('external_data/ticket/ticket_test.png')
+TICKET_TEMPLATE_PATH = os.path.normpath('external_data/ticket/ticket_template.png')
+FONT_PATH = os.path.normpath('external_data/fonts/Stolzl-Medium.ttf')
+FONT_SIZE_CITIES, FONT_SIZE = 78, 51
+
 
 commands = ('/ticket', '/help', '/cities', '/routes', '/restart')
 
@@ -36,7 +44,6 @@ DB_CONFIG = dict(
     host='localhost',
     database='scandinavian_airlines_bot'
 )
-
 SCENARIOS = {
     'Greeting': {
         'first_step': 'step1',

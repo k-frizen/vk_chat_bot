@@ -1,15 +1,13 @@
-import random
 import re
 from datetime import datetime
-from string import ascii_letters
 from typing import Union
 
 from vk_api.keyboard import VkKeyboard
 
-from utils import get_commands_from_text, set_keyboard_buttons, scenario_step_text, set_boarding_time, log
 from generate_flights import create_schedule, ROUTES
-from generate_ticket import generate_ticket
+from generate_ticket import TicketMaker
 from settings import CITIES, DATE_FORMAT
+from utils import get_commands_from_text, set_keyboard_buttons, scenario_step_text, set_boarding_time, log
 
 
 def greeting(text, context) -> VkKeyboard:
@@ -138,8 +136,12 @@ def name_handler(text, context) -> bool:
 
 def generates_ticket_handler(text, context) -> bytes:
     """ also step 10"""
+    from random import randint, choice
+    from string import ascii_uppercase
+
     context['seat'] = '{row}{seat}'.format(
-        row=random.randint(1, 32), seat=random.choice(ascii_letters[:5]).title()  # from A to F
+        row=randint(1, 32),
+        seat=choice(ascii_uppercase[:5])  # from A to F
     )
     context['gate'] = '1'
-    return generate_ticket(context)
+    return TicketMaker().generate_ticket(context)

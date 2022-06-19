@@ -7,9 +7,9 @@ from unittest.mock import Mock, patch
 from pony.orm import db_session, rollback
 from vk_api.bot_longpoll import VkBotMessageEvent
 
-from settings import TEST_TICKET_PATH
 from dataset import INPUTS, RAW_EVENT, EXCEPTED_OUTPUTS, context
-from generate_ticket import generate_ticket, create_test_boarding_pass
+from generate_ticket import TicketMaker
+from settings import TEST_TICKET_PATH
 from vk_bot import Bot
 
 
@@ -75,8 +75,8 @@ class TestBot(unittest.TestCase):
         self.assertEqual(real_outputs, EXCEPTED_OUTPUTS)
 
     def test_ticket(self):
-        create_test_boarding_pass(TEST_TICKET_PATH, context)
-        ticket_bytes = generate_ticket(context)
+        TicketMaker().create_test_boarding_pass(TEST_TICKET_PATH, context)
+        ticket_bytes = TicketMaker().generate_ticket(context)
         with open(TEST_TICKET_PATH, 'rb') as ticket_example:
             content = ticket_example.read()
 
