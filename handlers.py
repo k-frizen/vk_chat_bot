@@ -4,7 +4,7 @@ from typing import Union
 
 from vk_api.keyboard import VkKeyboard
 
-from generate_flights import create_schedule, ROUTES
+from generate_flights import Router
 from generate_ticket import TicketMaker
 from settings import CITIES, DATE_FORMAT
 from utils import get_commands_from_text, set_keyboard_buttons, scenario_step_text, set_boarding_time, log
@@ -32,7 +32,7 @@ def routes(text, context) -> bool or VkKeyboard:
     city = text.title()
     if city in CITIES:
         context['departure_city'] = city
-        return set_keyboard_buttons(ROUTES[city])
+        return set_keyboard_buttons(Router().routes[city])
     else:
         return False
 
@@ -58,9 +58,11 @@ def date_handler(text, context) -> Union[bool, VkKeyboard]:
     if (date - date.today()).days < 0:
         return False
 
-    schedule = create_schedule(departure_city=context['departure_city'],
-                               arrival_city=context['destination_city'], date=date)
-
+    schedule = Router().schedule_creator(
+        departure_city=context['departure_city'],
+        arrival_city=context['destination_city'],
+        date=date
+    )
     context['flight_number'] = schedule['flight_number']
     schedule.pop('flight_number')
     context['schedule'] = schedule

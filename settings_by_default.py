@@ -5,6 +5,9 @@ GROUP_ID = 111
 PASSWORD = ''
 
 CITIES = ('Reykjavik', 'Oslo', 'Stockholm', 'Copenhagen', 'Torshavn')
+CITIES_WITHOUT_CONNECTION = {'Stockholm', 'Torshavn'}
+EVERY_TEN_DAYS_CITIES = {'Reykjavik', 'Torshavn'}  # two cities with flights at days even 10
+EVERY_FRIDAY_CITIES = {'Stockholm', 'Reykjavik'}  # two cities with flights at fridays
 
 # Datetime format settings
 DATE_FORMAT = '%d/%m/%Y'

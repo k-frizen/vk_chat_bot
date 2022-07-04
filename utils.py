@@ -4,7 +4,7 @@ from typing import Union
 
 from vk_api.keyboard import VkKeyboardColor, VkKeyboard
 
-from generate_flights import ROUTES
+from generate_flights import Router
 from models import UserState
 from settings import CITIES, DEFAULT_ANSWER, SCENARIOS, DATE_TIME_FORMAT, TIME_FORMAT, commands
 
@@ -39,7 +39,7 @@ def form_answer_to_user(command: str) -> str:
 
         case '/routes':
             answer = ''
-            for departure, arrival_list in ROUTES.items():
+            for departure, arrival_list in Router().routes.items():
                 answer += ' '.join([
                     f'\nИз {departure}\n'
                     'В:', *arrival_list, '\n'
