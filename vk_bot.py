@@ -8,7 +8,8 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType, VkBotMessageEvent
 from vk_api.keyboard import VkKeyboard
 
 import handlers
-from utils import default_keyboard, get_commands_from_text, set_keyboard_buttons, form_answer_to_user
+from keyboards import Keyboard
+from utils import get_commands_from_text, set_keyboard_buttons, set_answer_to_user
 from utils import user_state_exists, log, configure_logging
 from models import UserState, Registration
 from settings import SCENARIOS, INTENTS, DEFAULT_ANSWER, GROUP_ID, VK_BOT_TOKEN
@@ -78,7 +79,7 @@ class Bot:
                 break
 
         else:
-            self.send_message(DEFAULT_ANSWER, user_id, keyboard=default_keyboard())
+            self.send_message(DEFAULT_ANSWER, user_id, keyboard=Keyboard().default_keyboard())
 
     def send_message(self, answer: str, user_id: int, *, image: bytes = None, keyboard: str = '') -> None:
         """Обеспечивает отправку сообщения пользователю
@@ -133,7 +134,7 @@ class Bot:
                     keyboard = reply.get_keyboard()
             else:
                 answer = DEFAULT_ANSWER
-                keyboard = default_keyboard()
+                keyboard = Keyboard().default_keyboard()
 
         self.send_message(answer, user_id, keyboard=keyboard)
 
@@ -207,18 +208,18 @@ class Bot:
                     self.start_scenario(user_id, scenario_name, user_name, text=command)
 
                 case '/cities' | '/routes':
-                    text_to_send = form_answer_to_user(command)
+                    text_to_send = set_answer_to_user(command)
                     commands_from_text = get_commands_from_text(text_to_send)
-                    keyboard = set_keyboard_buttons(commands_from_text)
+                    keyboard = Keyboard().set_keyboard_buttons(commands_from_text)
                     self.send_message(text_to_send, user_id, keyboard=keyboard.get_keyboard())
 
                 case '/restart':
-                    keyboard = default_keyboard()
+                    keyboard = Keyboard().default_keyboard()
                     self.send_message(DEFAULT_ANSWER, user_id, keyboard=keyboard)
                     user_state_exists(user_id)
 
         else:
-            keyboard = set_keyboard_buttons(commands)
+            keyboard = Keyboard().set_keyboard_buttons(commands)
             self.send_message(
                 answer='Отправь только одну команду!', user_id=user_id, keyboard=keyboard.get_keyboard()
             )

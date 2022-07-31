@@ -1,12 +1,9 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Union
-
-from vk_api.keyboard import VkKeyboardColor, VkKeyboard
 
 from generate_flights import Router
 from models import UserState
-from settings import CITIES, DEFAULT_ANSWER, SCENARIOS, DATE_TIME_FORMAT, TIME_FORMAT, commands
+from settings import CITIES, SCENARIOS, DATE_TIME_FORMAT, TIME_FORMAT, commands
 
 log = logging.getLogger('bot')
 
@@ -26,7 +23,7 @@ def configure_logging() -> None:
     log.addHandler(file_handler)
 
 
-def form_answer_to_user(command: str) -> str:
+def set_answer_to_user(command: str) -> str:
     """Возвращает текст ответа для команды
 
     :param command: одна из команд бота (только '/cities' или '/routes')"""
@@ -40,29 +37,12 @@ def form_answer_to_user(command: str) -> str:
         case '/routes':
             answer = ''
             for departure, arrival_list in Router().routes.items():
-                answer += ' '.join([
+                one_city_routes = [
                     f'\nИз {departure}\n'
                     'В:', *arrival_list, '\n'
-                ])
+                ]
+                answer += ' '.join(one_city_routes)
             return f'{answer}\n\n Если хочешь заказать билет, отправь команду /ticket .'
-
-
-def set_keyboard_buttons(buttons_text: Union[tuple, list], one_line: bool = False) -> VkKeyboard:
-    """Формирует клавиатуру с данными кнопками.
-
-    :param buttons_text: надписи для кнопок клавиатуры
-    :param one_line: должна ли быть клавиатура в одну линию. По умолчанию: False
-    :rtype: VkKeyboard"""
-    keyboard = VkKeyboard(one_time=False, inline=False)
-    for i, unit in enumerate(buttons_text, start=1):
-        keyboard.add_button(label=unit, color=VkKeyboardColor.PRIMARY)
-        if not i % 2 and i != len(buttons_text) and not one_line:
-            keyboard.add_line()
-
-    if '/restart' not in buttons_text:
-        keyboard.add_line()
-        keyboard.add_button(label='/restart', color=VkKeyboardColor.SECONDARY)
-    return keyboard
 
 
 def get_commands_from_text(text: str) -> tuple:
@@ -71,15 +51,6 @@ def get_commands_from_text(text: str) -> tuple:
     :param text: текст, в котором будет производиться поиск
     :return: кортеж с командами из текста"""
     return tuple(word for word in text.split() if word in commands)
-
-
-def default_keyboard() -> str:
-    """Возвращает клавиатуру с кнопками-командами из ответа по умолчанию
-
-    :return: keyboard's json"""
-    buttoms = get_commands_from_text(DEFAULT_ANSWER)
-    keyboard = set_keyboard_buttons(buttoms)
-    return keyboard.get_keyboard()
 
 
 def scenario_step_text(scenario_name: str, step_name: str) -> str:
