@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 
 from settings import DEFAULT_ANSWER, DATE_FORMAT
-from utils import form_answer_to_user, scenario_step_text
+from utils import set_answer_to_user, scenario_step_text
 
 
 def set_dates() -> tuple[str, str]:
@@ -73,8 +73,8 @@ INPUTS = [
 EXCEPTED_OUTPUTS = [
     scenario_step_text('Greeting', 'step1').format(**context),  # 0
     scenario_step_text('Help', 'step1'),  # 1
-    form_answer_to_user(INPUTS[2]),  # 2
-    form_answer_to_user(INPUTS[3]),  # 3
+    set_answer_to_user(INPUTS[2]),  # 2
+    set_answer_to_user(INPUTS[3]),  # 3
     DEFAULT_ANSWER,  # 4
     scenario_step_text('Ordering', 'step1').format(**context),  # 5
     scenario_step_text('Ordering', 'step2').format(**context),  # 6
