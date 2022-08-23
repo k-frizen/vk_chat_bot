@@ -90,7 +90,7 @@ SCENARIOS = {
                 'next_step': 'step3'
             },
             'step3': {
-                'text': 'Был выбран рейс между {departure_city} и {destination_city}.'
+                'text': 'Был выбран рейс между {departure_city} и {destination_city}. '
                         'Введи день отправления в формате: ' + f'{USER_DATE_FORMAT}.',
                 'failure_text': 'Нет рейсов между этими городами.',
                 'handler': 'route_info',
