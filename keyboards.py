@@ -33,6 +33,7 @@ class Keyboard:
         return keyboard.get_keyboard()
 
     def __add_restart_button(self) -> None:
+        """"Добавляет в существующую клавиатуру кнопку с командой '/restart' """
         self.__keyboard.add_line()
         self.__keyboard.add_button(label='/restart', color=VkKeyboardColor.SECONDARY)
 
