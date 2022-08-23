@@ -11,6 +11,7 @@ EVERY_FRIDAY_CITIES = {'Stockholm', 'Reykjavik'}  # two cities with flights at f
 
 # Datetime format settings
 DATE_FORMAT = '%d/%m/%Y'
+USER_DATE_FORMAT = 'dd/mm/yyyy'
 TIME_FORMAT = '%H:%M'
 DATE_TIME_FORMAT = f'{DATE_FORMAT} {TIME_FORMAT}'
 
@@ -90,7 +91,7 @@ SCENARIOS = {
             },
             'step3': {
                 'text': 'Был выбран рейс между {departure_city} и {destination_city}.'
-                        'Введи день отправления в формате: ' + f'{DATE_FORMAT}.',
+                        'Введи день отправления в формате: ' + f'{USER_DATE_FORMAT}.',
                 'failure_text': 'Нет рейсов между этими городами.',
                 'handler': 'route_info',
                 'next_step': 'step4'

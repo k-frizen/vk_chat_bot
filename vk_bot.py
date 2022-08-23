@@ -9,8 +9,7 @@ from vk_api.keyboard import VkKeyboard
 
 import handlers
 from keyboards import Keyboard
-from utils import get_commands_from_text, set_keyboard_buttons, set_answer_to_user
-from utils import user_state_exists, log, configure_logging
+from utils import get_commands_from_text, set_answer_to_user, user_state_exists, log, configure_logging
 from models import UserState, Registration
 from settings import SCENARIOS, INTENTS, DEFAULT_ANSWER, GROUP_ID, VK_BOT_TOKEN
 
