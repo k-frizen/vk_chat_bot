@@ -1,16 +1,16 @@
 Проект чат-бота для социальной сети [vk.com](http://www.vk.com). Бот создан для информирования и продажи авиабилетов вымешленной авикомпании.
 
-В [папке]([url](https://github.com/kirillsdnv/vk_chat_bot/tree/master/external_data/dialog)) можно увидеть диалог с ботом со всеми командами и шагами сценария.
+В [папке]( https://github.com/kirillsdnv/vk_chat_bot/tree/master/external_data/dialog ) можно увидеть диалог с ботом охватывающий все шаги сценария и доступные команды.
 
 В общем виде логика работы чат-бота такова:
-при запуске бота (файл [vk_bot.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/vk_bot.py)) VkBotLongPoll начинает "слушать" сервер
+при запуске бота (файл [vk_bot.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/vk_bot.py)) `VkBotLongPoll` начинает "слушать" сервер
 и при появлении события (`event`) вызывается метод `event_handler`; 
 в зависимости от того, содержится ли команда в тексте сообщения, находится ли пользователь на одном из шагов сценария, вызывается соответствующий метод.
 
 Бот имеет 5 команд:
   * `'/help'` отправляет пользователю текст и предлагает воспользоваться командами `'/cities'` и `'/routes'`, чтобы узнать об актуальных маршрутах
-  * `'/cities'` выводит список городов куда летают самолёты авиакомпании
-  * `'/routes'` дополняет этот список куда именно из каждого города возможно улететь
+  * `'/cities'` выводит список обслуживаемых городов
+  * `'/routes'` дополняет список направлений из каждого города
 
   * `'/ticket'` - запускает сценарий покупки билета (Ordering)
   * `'/restart'` - перезапускает бота
@@ -45,11 +45,11 @@
   - [generate_flights.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/generate_flights.py) модуль генерирует расписание и маршруты
   - [utils.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/utils.py) содержит в себе функции различного функционала:
     - формируют ответы для пользователя
-    - генерируют клавиатуры
     - конфигурируют логирование
   - [models.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/models.py) отвечает за генерацию баз данных
   - [tests.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/tests.py) модуль с тестами бота
   - [dataset.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/dataset.py) содержит данные, используемые в тестах:
     генирирует иммитацию сообщений от пользователя и ожидаемые ответы бота.
+  - [keyboards.py](https://github.com/kirillsdnv/vk_chat_bot/blob/master/keyboards.py) формирует клавиатуру для выбора вариантов ответа бота
 
  
