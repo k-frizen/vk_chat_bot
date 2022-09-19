@@ -202,9 +202,10 @@ class Bot:
             command = commands[0]
             match command:
 
-                case '/help' | '/ticket':
-                    scenario_name = 'Help' if command == '/help' else 'Ordering'
-                    self.start_scenario(user_id, scenario_name, user_name, text=command)
+                case '/help':
+                    self.start_scenario(user_id, 'Help', user_name, text=command)
+                case '/ticket':
+                    self.start_scenario(user_id, 'Ordering', user_name, text=command)
 
                 case '/cities' | '/routes':
                     text_to_send = set_answer_to_user(command)

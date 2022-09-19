@@ -48,6 +48,7 @@ DB_CONFIG = dict(
     host='localhost',
     database='scandinavian_airlines_bot'
 )
+
 SCENARIOS = {
     'Greeting': {
         'first_step': 'step1',
