@@ -45,12 +45,12 @@ def set_answer_to_user(command: str) -> str:
             return f'{answer}\n\n Если хочешь заказать билет, отправь команду /ticket .'
 
 
-def get_commands_from_text(text: str) -> tuple:
+def get_commands_from_text(text: str) -> tuple[str]:
     """Ищет команды в тексте
 
     :param text: текст, в котором будет производиться поиск
     :return: кортеж с командами из текста"""
-    return tuple(word for word in text.split() if word in commands)
+    return tuple(filter(lambda word: word in commands, text.split()))
 
 
 def scenario_step_text(scenario_name: str, step_name: str) -> str:
@@ -66,8 +66,9 @@ def set_boarding_time(context: dict) -> str:
 
     :param context: информация о заказе
     :return: строка, содержащая время в формате hh:mm"""
-    departure_datetime = f"{context['departure_date']} {context['departure_time']}"
-    boarding_datetime = datetime.strptime(departure_datetime, DATE_TIME_FORMAT) - timedelta(minutes=30)
+    departure_str_time = f"{context['departure_date']} {context['departure_time']}"
+    departure_datetime = datetime.strptime(departure_str_time, DATE_TIME_FORMAT)
+    boarding_datetime = departure_datetime - timedelta(minutes=30)
     return boarding_datetime.time().strftime(TIME_FORMAT)
 
 
