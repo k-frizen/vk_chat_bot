@@ -1,6 +1,6 @@
 from pony.orm import Database, Required, Json, Optional
 
-from settings import DB_CONFIG
+from config import DB_CONFIG
 
 db = Database()
 db.bind(**DB_CONFIG)

@@ -1,22 +1,8 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
 
-from settings import DEFAULT_ANSWER, DATE_FORMAT
-from utils import set_answer_to_user, scenario_step_text
-
-
-def set_dates() -> tuple[str, str]:
-    """Возвращает две даты:
-    1) дату-имитацию ввода пользователем желаемой даты вылета (через неделю относительно сегодняшнего дня)
-    2) дату-имитацию выбора пользователем действительной даты вылета (на следующий день
-    относительно желаемой даты вылета)"""
-    date_for_test = datetime.today() + timedelta(days=7)
-    input_date = date_for_test.strftime(DATE_FORMAT)
-
-    user_choice_date = date_for_test + timedelta(days=1)
-    real_departure_date = user_choice_date.strftime(DATE_FORMAT)
-    return input_date, real_departure_date
-
+from constants import OSLO
+from utils import set_answer_to_user, scenario_step_text, set_dates
+from wordings import DEFAULT_ANSWER
 
 RAW_EVENT = {
     'type': 'message_new',
@@ -24,7 +10,8 @@ RAW_EVENT = {
         'message': {
             'date': 1637772220, 'from_id': 48055049, 'id': 315, 'out': 0, 'peer_id': 48055049,
             'text': '', 'attachments': [], 'conversation_message_id': 313, 'fwd_messages': [],
-            'important': False, 'is_hidden': False, 'random_id': 0},
+            'important': False, 'is_hidden': False, 'random_id': 0
+        },
         'client_info': {
             'button_actions': [
                 'text', 'vkpay', 'open_app', 'location', 'open_link',
@@ -38,7 +25,7 @@ inputted_date, departure_date = set_dates()
 context = {
     'comment': 'comment',
     'count_of_tickets': 1,
-    'departure_city': 'Oslo',
+    'departure_city': OSLO,
     'departure_date': departure_date,
     'departure_time': '12:00',
     'boarding_time': '11:30',

@@ -1,6 +1,6 @@
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
-from settings import DEFAULT_ANSWER
+from wordings import DEFAULT_ANSWER
 from utils import get_commands_from_text
 
 

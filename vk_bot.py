@@ -8,10 +8,13 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType, VkBotMessageEvent
 from vk_api.keyboard import VkKeyboard
 
 import handlers
+from config import VK_BOT_TOKEN, GROUP_ID
+from constants import *
 from keyboards import Keyboard
-from utils import get_commands_from_text, set_answer_to_user, user_state_exists, log, configure_logging
 from models import UserState, Registration
-from settings import SCENARIOS, INTENTS, DEFAULT_ANSWER, GROUP_ID, VK_BOT_TOKEN
+from scenarios import SCENARIOS
+from utils import get_commands_from_text, set_answer_to_user, user_state_exists, log, configure_logging
+from wordings import DEFAULT_ANSWER, CAN_NOT_HANDLE_THIS_TYPE, ONE_COMMAND_ONLY
 
 
 class Bot:
@@ -42,7 +45,7 @@ class Bot:
 
         :param event: сообщение-событие, полученное от пользователя"""
         message = event.object.message
-        user_id, text = message['peer_id'], message['text']
+        user_id, text = message['peer_id'], message[TEXT]
         user_name = self._get_name(user_id)
 
         if event.type == VkBotEventType.MESSAGE_NEW:
@@ -57,7 +60,7 @@ class Bot:
                 self.intent_searching(text, user_name, user_id)
 
         else:
-            self.send_message(f'Я не могу обрабатывать сообщения такого типа {event.type}', user_id)
+            self.send_message(CAN_NOT_HANDLE_THIS_TYPE.format(event.type), user_id)
             log.info('Unknown type: ', event.type)
 
     def intent_searching(self, text: str, user_name: str, user_id: int) -> None:
@@ -117,15 +120,15 @@ class Bot:
         :param user_name: имя пользователя
         :param text: текст сообщения"""
         scenario = SCENARIOS[scenario_name]
-        first_step = scenario['first_step']
-        step = scenario['steps'][first_step]
-        context = {'name': user_name}
-        answer = step['text'].format(**context)
+        first_step = scenario[FIRST_STEP]
+        step = scenario[STEPS][first_step]
+        context = {NAME: user_name}
+        answer = step[TEXT].format(**context)
         keyboard = VkKeyboard.get_empty_keyboard()
 
         user_state_exists(user_id)
-        if step['handler']:
-            handler = getattr(handlers, step['handler'])
+        if step[HANDLER]:
+            handler = getattr(handlers, step[HANDLER])
             reply = handler(text=text, context=context)
 
             if reply:
@@ -137,8 +140,8 @@ class Bot:
 
         self.send_message(answer, user_id, keyboard=keyboard)
 
-        if step['next_step']:
-            UserState(user_id=user_id, step_name=step['next_step'],
+        if step[NEXT_STEP]:
+            UserState(user_id=user_id, step_name=step[NEXT_STEP],
                       scenario_name=scenario_name, context=context)
 
     @db_session
@@ -149,12 +152,12 @@ class Bot:
         :param text: текст сообщения
         :param state: поле базы данных UserState -- "состояние" пользователя в сценарии (шаг)
         :param user_id: id пользователя"""
-        steps = SCENARIOS[state.scenario_name]['steps']
+        steps = SCENARIOS[state.scenario_name][STEPS]
         step = steps[state.step_name]
-        handler = getattr(handlers, step['handler'])
+        handler = getattr(handlers, step[HANDLER])
         reply = handler(text=text, context=state.context)
         if reply:
-            answer, image = step['text'], None
+            answer, image = step[TEXT], None
             keyboard = VkKeyboard.get_empty_keyboard()
 
             if isinstance(reply, str):
@@ -163,24 +166,23 @@ class Bot:
             elif isinstance(reply, VkKeyboard):
                 keyboard = reply.get_keyboard()
 
-            if 'image' in step:
-                handler = getattr(handlers, step['image'])
+            if IMAGE in step:
+                handler = getattr(handlers, step[IMAGE])
                 image = handler(text=text, context=state.context)
 
             self.send_message(
                 answer.format(**state.context), user_id, image=image, keyboard=keyboard
             )
 
-            if step['next_step']:  # next step exists?
-                state.step_name = step['next_step']
+            if step[NEXT_STEP]:
+                state.step_name = step[NEXT_STEP]
 
             else:  # finish scenario
-                log.info('New order')
                 Registration(**state.context)
                 state.delete()
 
         else:
-            self.send_message(step['failure_text'], user_id)
+            self.send_message(step[FAILURE_TEXT], user_id)
 
     def _get_name(self, user_id: int) -> str:
         """Получает данные с сервера о имени пользователя.
@@ -198,31 +200,29 @@ class Bot:
         :param user_name: имя пользователя
         :param user_id: id пользователя (peer id)
         """
-        if len(commands) == 1:
-            command = commands[0]
-            match command:
-
-                case '/help':
-                    self.start_scenario(user_id, 'Help', user_name, text=command)
-                case '/ticket':
-                    self.start_scenario(user_id, 'Ordering', user_name, text=command)
-
-                case '/cities' | '/routes':
-                    text_to_send = set_answer_to_user(command)
-                    commands_from_text = get_commands_from_text(text_to_send)
-                    keyboard = Keyboard().set_keyboard_buttons(commands_from_text)
-                    self.send_message(text_to_send, user_id, keyboard=keyboard.get_keyboard())
-
-                case '/restart':
-                    keyboard = Keyboard().default_keyboard()
-                    self.send_message(DEFAULT_ANSWER, user_id, keyboard=keyboard)
-                    user_state_exists(user_id)
-
-        else:
+        if len(commands) != 1:
             keyboard = Keyboard().set_keyboard_buttons(commands)
             self.send_message(
-                answer='Отправь только одну команду!', user_id=user_id, keyboard=keyboard.get_keyboard()
+                answer=ONE_COMMAND_ONLY, user_id=user_id, keyboard=keyboard.get_keyboard()
             )
+            return
+        command = commands[0]
+        if command == HELP_COMMAND:
+            self.start_scenario(user_id, HELP_FLOW, user_name, text=command)
+
+        elif command == TICKET_COMMAND:
+            self.start_scenario(user_id, ORDERING_FLOW, user_name, text=command)
+
+        elif command in (CITIES_COMMAND, ROUTES_COMMAND):
+            text_to_send = set_answer_to_user(command)
+            commands_from_text = get_commands_from_text(text_to_send)
+            keyboard = Keyboard().set_keyboard_buttons(commands_from_text)
+            self.send_message(text_to_send, user_id, keyboard=keyboard.get_keyboard())
+
+        elif command == RESTART_COMMAND:
+            keyboard = Keyboard().default_keyboard()
+            self.send_message(DEFAULT_ANSWER, user_id, keyboard=keyboard)
+            user_state_exists(user_id)
 
 
 if __name__ == "__main__":

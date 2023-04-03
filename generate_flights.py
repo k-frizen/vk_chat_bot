@@ -2,11 +2,12 @@
 import datetime
 from collections import defaultdict
 
-from settings import CITIES, DATE_FORMAT, CITIES_WITHOUT_CONNECTION, EVERY_TEN_DAYS_CITIES, EVERY_FRIDAY_CITIES
+from config import DATE_FORMAT
+from constants import CITIES_LIST, CITIES_WITHOUT_CONNECTION, EVERY_TEN_DAYS_CITIES, EVERY_FRIDAY_CITIES
 
 
 class Router:
-    def __init__(self, cities: tuple = CITIES, days_in_schedule: int = 5):
+    def __init__(self, cities: tuple = CITIES_LIST, days_in_schedule: int = 5):
         self.cities = cities
         self.routes = self.routes_creator()
         self.count_of_days_in_schedule = days_in_schedule
@@ -20,17 +21,17 @@ class Router:
                     routes[departure_city].append(arrival_city)
         return routes
 
-    def schedule_creator(self, departure_city: str, arrival_city: str, date: datetime.date) -> dict:
+    def schedule_creator(self, departure_city: str, destination_city: str, date: datetime.date, **kwargs) -> dict:
         """ Создаёт расписание: формирует словарь с номером рейса, возможными датами и временем вылета,
         относительно данного дня. Количество дней в расписании задаётся с помощью
         атрибута класса days_in_schedule (по умолчанию равен 5).
 
         :param departure_city: город вылета
-        :param arrival_city: город прибытия
+        :param destination_city: город прибытия
         :param date: день, относительно которого генерируется расписание
         """
-        route = {departure_city, arrival_city}
-        flight_number = f'SD{len(departure_city)}{len(arrival_city)}'  # 'Oslo', 'Stockholm' -> 'SD49'
+        route = {departure_city, destination_city}
+        flight_number = f'SD{len(departure_city)}{len(destination_city)}'  # 'Oslo', 'Stockholm' -> 'SD49'
         schedule = dict(flight_number=flight_number, time=['12:00'], dates=[])
         dates_list = schedule['dates']
 

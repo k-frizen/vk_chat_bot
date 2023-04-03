@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 
 from generate_flights import Router
 from models import UserState
-from settings import CITIES, SCENARIOS, DATE_TIME_FORMAT, TIME_FORMAT, commands
+from scenarios import SCENARIOS
+from config import TIME_FORMAT, DATE_TIME_FORMAT, DATE_FORMAT
+from constants import CITIES_LIST, COMMANDS
 
 log = logging.getLogger('bot')
 
@@ -32,7 +34,7 @@ def set_answer_to_user(command: str) -> str:
         case '/cities':
             return ('{}\n\nЕсли хочешь заказать билет, отправь команду /ticket .'
                     'Введи команду /routes , чтобы узнать все обслуживаемые маршруты.').format(
-                '\n'.join(CITIES))
+                '\n'.join(CITIES_LIST))
 
         case '/routes':
             answer = ''
@@ -50,7 +52,7 @@ def get_commands_from_text(text: str) -> tuple[str]:
 
     :param text: текст, в котором будет производиться поиск
     :return: кортеж с командами из текста"""
-    return tuple(filter(lambda word: word in commands, text.split()))
+    return tuple(filter(lambda word: word in COMMANDS, text.split()))
 
 
 def scenario_step_text(scenario_name: str, step_name: str) -> str:
@@ -80,3 +82,16 @@ def user_state_exists(user_id: int) -> None:
     state = UserState.get(user_id=user_id)
     if state is not None:
         state.delete()
+
+
+def set_dates() -> tuple[str, str]:
+    """Возвращает две даты:
+    1) дату-имитацию ввода пользователем желаемой даты вылета (через неделю относительно сегодняшнего дня)
+    2) дату-имитацию выбора пользователем действительной даты вылета (на следующий день
+    относительно желаемой даты вылета)"""
+    date_for_test = datetime.today() + timedelta(days=7)
+    input_date = date_for_test.strftime(DATE_FORMAT)
+
+    user_choice_date = date_for_test + timedelta(days=1)
+    real_departure_date = user_choice_date.strftime(DATE_FORMAT)
+    return input_date, real_departure_date

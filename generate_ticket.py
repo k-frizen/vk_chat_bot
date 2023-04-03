@@ -3,7 +3,7 @@ from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 from PIL.ImageFont import FreeTypeFont
 
-from settings import TICKET_TEMPLATE_PATH, FONT_PATH, FONT_SIZE_CITIES, FONT_SIZE
+from config import TICKET_TEMPLATE_PATH, FONT_PATH, FONT_SIZE_CITIES, FONT_SIZE
 
 
 class TicketMaker:

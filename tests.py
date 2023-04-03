@@ -9,7 +9,7 @@ from vk_api.bot_longpoll import VkBotMessageEvent
 
 from dataset import INPUTS, RAW_EVENT, EXCEPTED_OUTPUTS, context
 from generate_ticket import TicketMaker
-from settings import TEST_TICKET_PATH
+from config import TEST_TICKET_PATH
 from vk_bot import Bot
 
 

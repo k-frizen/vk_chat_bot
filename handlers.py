@@ -7,32 +7,33 @@ from vk_api.keyboard import VkKeyboard
 from generate_flights import Router
 from generate_ticket import TicketMaker
 from keyboards import Keyboard
-from settings import CITIES, DATE_FORMAT
+from config import DATE_FORMAT
+from constants import *
 from utils import get_commands_from_text, scenario_step_text, set_boarding_time, log
 
 
-def greeting(text, context) -> VkKeyboard:
+def greeting(text: str, context: dict) -> VkKeyboard:
     step_text = scenario_step_text('Greeting', 'step1')
     buttoms_text = get_commands_from_text(step_text)
     return Keyboard().set_keyboard_buttons(buttoms_text)
 
 
-def help_handler(text, context) -> VkKeyboard:
+def help_handler(text: str, context: dict) -> VkKeyboard:
     step_text = scenario_step_text('Help', 'step1')
     buttoms_text = get_commands_from_text(step_text)
     return Keyboard().set_keyboard_buttons(buttoms_text)
 
 
-def departure(text, context) -> VkKeyboard:
+def departure(text: str, context: dict) -> VkKeyboard:
     """ step 1 """
-    return Keyboard().set_keyboard_buttons(CITIES)
+    return Keyboard().set_keyboard_buttons(CITIES_LIST)
 
 
-def routes(text, context) -> bool or VkKeyboard:
+def routes(text: str, context: dict) -> bool or VkKeyboard:
     """ step 2 """
     city = text.title()
-    if city in CITIES:
-        context['departure_city'] = city
+    if city in CITIES_LIST:
+        context[DEPARTURE_CITY] = city
 
         buttons = Router().routes[city]
         return Keyboard().set_keyboard_buttons(buttons)
@@ -40,17 +41,17 @@ def routes(text, context) -> bool or VkKeyboard:
         return False
 
 
-def route_info(text, context) -> bool:
+def route_info(text: str, context: dict) -> bool:
     """ step 3 """
     city = text.title()
-    if city in CITIES:
-        context['destination_city'] = city
+    if city in CITIES_LIST:
+        context[DESTINATION_CITY] = city
         return True
     else:
         return False
 
 
-def date_handler(text, context) -> Union[bool, VkKeyboard]:
+def date_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     """ step 4 """
     try:
         date = datetime.strptime(text, DATE_FORMAT).date()
@@ -61,35 +62,31 @@ def date_handler(text, context) -> Union[bool, VkKeyboard]:
     if (date - date.today()).days < 0:
         return False
 
-    schedule = Router().schedule_creator(
-        departure_city=context['departure_city'],
-        arrival_city=context['destination_city'],
-        date=date
-    )
-    context['flight_number'] = schedule['flight_number']
-    schedule.pop('flight_number')
-    context['schedule'] = schedule
+    schedule = Router().schedule_creator(**context, date=date)
+    context[FLIGHT_NUMBER] = schedule[FLIGHT_NUMBER]
+    schedule.pop(FLIGHT_NUMBER)
+    context[SCHEDULE] = schedule
 
-    buttons = schedule['dates']
+    buttons = schedule[DATES]
     return Keyboard().set_keyboard_buttons(buttons)
 
 
-def departure_date_handler(text, context) -> Union[bool, VkKeyboard]:
+def departure_date_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     """ step 5 """
-    if text in context['schedule']['dates']:
-        context['departure_date'] = text
-        departure_time: list = context['schedule']['time']
+    if text in context[SCHEDULE][DATES]:
+        context[DEPARTURE_DATE] = text
+        departure_time: list = context[SCHEDULE][TIME]
         return Keyboard().set_keyboard_buttons(departure_time)
     else:
         return False
 
 
-def departure_time_handler(text, context):
+def departure_time_handler(text: str, context: dict):
     """ step 5.1 """
-    if text in context['schedule']['time']:
-        context.pop('schedule')
-        context['departure_time'] = text
-        context['boarding_time'] = set_boarding_time(context)
+    if text in context[SCHEDULE][TIME]:
+        context.pop(SCHEDULE)
+        context[DEPARTURE_TIME] = text
+        context[BOARDING_TIME] = set_boarding_time(context)
 
         buttons = tuple(range(1, 6))
         return Keyboard().set_keyboard_buttons(buttons, one_line=True)
@@ -97,41 +94,41 @@ def departure_time_handler(text, context):
         return False
 
 
-def count_handler(text, context) -> Union[bool, VkKeyboard]:
+def count_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     """ step 6 """
     try:
         count_of_tickets = int(text)
-        if 1 <= count_of_tickets <= 5:
-            context['count_of_tickets'] = count_of_tickets
-            context['ticket'] = 'билет' if text == '1' else 'билетов' if text == '5' else 'билета'
+        assert 1 <= count_of_tickets <= 5
+        context[COUNT_OF_TICKETS] = count_of_tickets
+        context[TICKET] = 'билет' if text == '1' else 'билетов' if text == '5' else 'билета'
 
-            buttons = ('Продолжить', '/restart')
-            return Keyboard().set_keyboard_buttons(buttons)
+        buttons = ('Продолжить', '/restart')
+        return Keyboard().set_keyboard_buttons(buttons)
 
-        else:
-            return False
     except ValueError:
         log.debug(f'incorrect data: {text} can not be a integer!')
         return False
+    except AssertionError:
+        return False
 
 
-def comment(text, context) -> VkKeyboard:
+def comment(text: str, context: dict) -> VkKeyboard:
     """ step 7 """
-    context['comment'] = text if text != 'Продолжить' else ''
+    context[COMMENT] = text if text != 'Продолжить' else ''
     buttons = ('Да', '/restart')
     return Keyboard().set_keyboard_buttons(buttons)
 
 
-def data_correct(text, context) -> bool:
+def data_correct(text: str, context: dict) -> bool:
     """ step 8"""
     return True if text in ('Да', "да", 'Yes', 'yes', 'Y', 'y') else False
 
 
-def phone_handler(text, context) -> Union[bool, VkKeyboard]:
+def phone_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     """ step 9"""
     phone = re.match(r'\+?\d{1,3}[\d\-.\s()]{10,19}', text)
     if phone:
-        context['phone'] = text if text.startswith('+') else f'+{text}'
+        context[PHONE] = text if text.startswith('+') else f'+{text}'
         buttons = ('Продолжить', '/restart')
         return Keyboard().set_keyboard_buttons(buttons)
     else:
@@ -139,21 +136,21 @@ def phone_handler(text, context) -> Union[bool, VkKeyboard]:
         return False
 
 
-def name_handler(text, context) -> bool:
+def name_handler(text: str, context: dict) -> bool:
     """ step 10"""
     if text != "Продолжить":
-        context['name'] = text
+        context[NAME] = text
     return True
 
 
-def generates_ticket_handler(text, context) -> bytes:
+def generates_ticket_handler(text: str, context: dict) -> bytes:
     """ also step 10"""
     from random import randint, choice
     from string import ascii_uppercase
 
-    context['seat'] = '{row}{seat}'.format(
+    context[SEAT] = '{row}{seat}'.format(
         row=randint(1, 32),
         seat=choice(ascii_uppercase[:5])  # from A to F
     )
-    context['gate'] = '1'
+    context[GATE] = '1'
     return TicketMaker().generate_ticket(context)
