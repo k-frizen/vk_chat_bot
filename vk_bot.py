@@ -145,7 +145,7 @@ class Bot:
                       scenario_name=scenario_name, context=context)
 
     @db_session
-    def continue_scenario(self, text, state, user_id) -> None:
+    def continue_scenario(self, text: str, state: UserState, user_id: int) -> None:
         """Обеспечивает продолжение сценария, формирует ответ и клавиатуру.
 
 
@@ -192,7 +192,7 @@ class Bot:
         data = self.vk.method("users.get", {"user_ids": user_id})[0]
         return "{} {}".format(data["first_name"], data["last_name"])
 
-    def commands_handler(self, commands: tuple, user_id: int, user_name: str):
+    def commands_handler(self, commands: tuple[str], user_id: int, user_name: str):
         """Обрабатывает команду, отправленную пользователем,
         и отправляет соответствующее ей сообщение и/или клавиатуру
 
