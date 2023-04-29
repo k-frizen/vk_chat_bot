@@ -5,11 +5,11 @@ load_dotenv('.env')
 
 VK_BOT_TOKEN = os.getenv('VK_BOT_TOKEN')
 GROUP_ID = int(os.getenv('GROUP_ID'))
-PASSWORD = os.getenv('PASSWORD')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_CONFIG = dict(
     provider='postgres',
     user='postgres',
-    password=PASSWORD,
+    password=DB_PASSWORD,
     host='localhost',
     database='scandinavian_airlines_bot'
 )

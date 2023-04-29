@@ -5,7 +5,7 @@ from generate_flights import Router
 from models import UserState
 from scenarios import SCENARIOS
 from config import TIME_FORMAT, DATE_TIME_FORMAT, DATE_FORMAT
-from constants import CITIES_LIST, COMMANDS
+from constants import CITIES_LIST, COMMANDS, TEXT, STEPS, DEPARTURE_DATE
 
 log = logging.getLogger('bot')
 
@@ -60,7 +60,7 @@ def scenario_step_text(scenario_name: str, step_name: str) -> str:
 
     :param scenario_name: название сценария, текст шага которого нужно получить
     :param step_name: номер шага ('step_N') """
-    return SCENARIOS[scenario_name]['steps'][step_name]['text']
+    return SCENARIOS[scenario_name][STEPS][step_name][TEXT]
 
 
 def set_boarding_time(context: dict) -> str:
@@ -68,7 +68,7 @@ def set_boarding_time(context: dict) -> str:
 
     :param context: информация о заказе
     :return: строка, содержащая время в формате hh:mm"""
-    departure_str_time = f"{context['departure_date']} {context['departure_time']}"
+    departure_str_time = f"{context[DEPARTURE_DATE]} {context[DEPARTURE_DATE]}"
     departure_datetime = datetime.strptime(departure_str_time, DATE_TIME_FORMAT)
     boarding_datetime = departure_datetime - timedelta(minutes=30)
     return boarding_datetime.time().strftime(TIME_FORMAT)
