@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from constants import OSLO
+from constants import *
 from utils import set_answer_to_user, scenario_step_text, set_dates
 from wordings import DEFAULT_ANSWER
 
@@ -23,55 +23,55 @@ RAW_EVENT = {
 inputted_date, departure_date = set_dates()
 
 context = {
-    'comment': 'comment',
-    'count_of_tickets': 1,
-    'departure_city': OSLO,
-    'departure_date': departure_date,
-    'departure_time': '12:00',
-    'boarding_time': '11:30',
-    'destination_city': 'Stockholm',
-    'flight_number': 'SD49',
-    'name': 'Jack Shephard',
-    'phone': '+1481 5162342',
-    'ticket': 'билет',
-    'seat': '23A',
-    'gate': '1'
+    COMMENT: COMMENT,
+    COUNT_OF_TICKETS: 1,
+    DEPARTURE_CITY: OSLO,
+    DEPARTURE_DATE: departure_date,
+    DEPARTURE_TIME: '12:00',
+    BOARDING_TIME: '11:30',
+    DESTINATION_CITY: STOCKHOLM,
+    FLIGHT_NUMBER: 'SD49',
+    NAME: 'Jack Shephard',
+    PHONE: '+1481 5162342',
+    TICKET: 'билет',
+    SEAT: '23A',
+    GATE: '1'
 }
 
 INPUTS = [
     'Hi!',  # 0
-    '/help',  # 1
-    '/cities',  # 2
-    '/routes',  # 3
-    '/restart',  # 4
-    '/ticket',  # 5
-    context['departure_city'],  # 6
-    context['destination_city'],  # 7
+    HELP_COMMAND,  # 1
+    CITIES_COMMAND,  # 2
+    ROUTES_COMMAND,  # 3
+    RESTART_COMMAND,  # 4
+    TICKET_COMMAND,  # 5
+    context[DEPARTURE_CITY],  # 6
+    context[DESTINATION_CITY],  # 7
     inputted_date,  # 8
     departure_date,  # 9
-    context['departure_time'],  # 10
-    str(context['count_of_tickets']),  # 11
+    context[DEPARTURE_TIME],  # 10
+    str(context[COUNT_OF_TICKETS]),  # 11
     'Продолжить',  # 12
     'Да',  # 13
-    context['phone'],  # 14
+    context[PHONE],  # 14
     'Продолжить',  # 15
 ]
 
 EXCEPTED_OUTPUTS = [
     scenario_step_text('Greeting', 'step1').format(**context),  # 0
-    scenario_step_text('Help', 'step1'),  # 1
+    scenario_step_text(HELP_FLOW, 'step1'),  # 1
     set_answer_to_user(INPUTS[2]),  # 2
     set_answer_to_user(INPUTS[3]),  # 3
     DEFAULT_ANSWER,  # 4
-    scenario_step_text('Ordering', 'step1').format(**context),  # 5
-    scenario_step_text('Ordering', 'step2').format(**context),  # 6
-    scenario_step_text('Ordering', 'step3').format(**context),  # 7
-    scenario_step_text('Ordering', 'step4').format(**context),  # 8
-    scenario_step_text('Ordering', 'step5').format(**context),  # 9
-    scenario_step_text('Ordering', 'step5.1').format(**context),  # 10
-    scenario_step_text('Ordering', 'step6').format(**context),  # 11
-    scenario_step_text('Ordering', 'step7').format(**context),  # 12
-    scenario_step_text('Ordering', 'step8').format(**context),  # 13
-    scenario_step_text('Ordering', 'step9').format(**context),  # 14
-    scenario_step_text('Ordering', 'step10').format(**context),  # 15
+    scenario_step_text(ORDERING_FLOW, 'step1').format(**context),  # 5
+    scenario_step_text(ORDERING_FLOW, 'step2').format(**context),  # 6
+    scenario_step_text(ORDERING_FLOW, 'step3').format(**context),  # 7
+    scenario_step_text(ORDERING_FLOW, 'step4').format(**context),  # 8
+    scenario_step_text(ORDERING_FLOW, 'step5').format(**context),  # 9
+    scenario_step_text(ORDERING_FLOW, 'step5.1').format(**context),  # 10
+    scenario_step_text(ORDERING_FLOW, 'step6').format(**context),  # 11
+    scenario_step_text(ORDERING_FLOW, 'step7').format(**context),  # 12
+    scenario_step_text(ORDERING_FLOW, 'step8').format(**context),  # 13
+    scenario_step_text(ORDERING_FLOW, 'step9').format(**context),  # 14
+    scenario_step_text(ORDERING_FLOW, 'step10').format(**context),  # 15
 ]
