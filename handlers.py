@@ -6,7 +6,7 @@ from vk_api.keyboard import VkKeyboard
 
 from config import DATE_FORMAT
 from constants import *
-from generate_flights import Router
+from generate_flights import router
 from generate_ticket import TicketMaker
 from keyboards import keyboards
 from utils import get_commands_from_text, scenario_step_text, set_boarding_time, log
@@ -19,7 +19,7 @@ def greeting(text: str, context: dict) -> VkKeyboard:
 
 
 def help_handler(text: str, context: dict) -> VkKeyboard:
-    step_text = scenario_step_text('Help', 'step1')
+    step_text = scenario_step_text(HELP_FLOW, 'step1')
     buttoms_text = get_commands_from_text(step_text)
     return keyboards.set_keyboard_buttons(buttoms_text)
 
@@ -35,8 +35,7 @@ def routes(text: str, context: dict) -> bool or VkKeyboard:
     if city in CITIES_LIST:
         context[DEPARTURE_CITY] = city
 
-        buttons = Router().routes[city]
-        print(buttons)
+        buttons = router.routes[city]
         return keyboards.set_keyboard_buttons(buttons)
     else:
         return False
@@ -63,7 +62,7 @@ def date_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     if (date - date.today()).days < 0:
         return False
 
-    schedule = Router().schedule_creator(**context, date=date)
+    schedule = router.schedule_creator(**context, date=date)
     context[FLIGHT_NUMBER] = schedule[FLIGHT_NUMBER]
     schedule.pop(FLIGHT_NUMBER)
     context[SCHEDULE] = schedule
@@ -103,7 +102,7 @@ def count_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
         context[COUNT_OF_TICKETS] = count_of_tickets
         context[TICKET] = 'билет' if text == '1' else 'билетов' if text == '5' else 'билета'
 
-        buttons = ('Продолжить', '/restart')
+        buttons = ('Продолжить', RESTART_COMMAND)
         return keyboards.set_keyboard_buttons(buttons)
 
     except ValueError:
@@ -116,7 +115,7 @@ def count_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
 def comment(text: str, context: dict) -> VkKeyboard:
     """ step 7 """
     context[COMMENT] = text if text != 'Продолжить' else ''
-    buttons = ('Да', '/restart')
+    buttons = ('Да', RESTART_COMMAND)
     return keyboards.set_keyboard_buttons(buttons)
 
 
@@ -130,7 +129,7 @@ def phone_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     phone = re.match(r'\+?\d{1,3}[\d\-.\s()]{10,19}', text)
     if phone:
         context[PHONE] = text if text.startswith('+') else f'+{text}'
-        buttons = ('Продолжить', '/restart')
+        buttons = ('Продолжить', RESTART_COMMAND)
         return keyboards.set_keyboard_buttons(buttons)
     else:
         log.info(f'Incorrect phone number {text}')

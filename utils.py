@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 
 from config import TIME_FORMAT, DATE_TIME_FORMAT, DATE_FORMAT
-from constants import COMMANDS, TEXT, STEPS, DEPARTURE_DATE
+from constants import COMMANDS, TEXT, STEPS, DEPARTURE_DATE, DEPARTURE_TIME
 from models import UserState
 from scenarios import SCENARIOS
 from wordings import CITIES_COMMAND_TEXT, ROUTES_COMMAND_TEXT
@@ -59,7 +59,7 @@ def set_boarding_time(context: dict) -> str:
 
     :param context: информация о заказе
     :return: строка, содержащая время в формате hh:mm"""
-    departure_str_time = f"{context[DEPARTURE_DATE]} {context[DEPARTURE_DATE]}"
+    departure_str_time = f"{context[DEPARTURE_DATE]} {context[DEPARTURE_TIME]}"
     departure_datetime = datetime.strptime(departure_str_time, DATE_TIME_FORMAT)
     boarding_datetime = departure_datetime - timedelta(minutes=30)
     return boarding_datetime.time().strftime(TIME_FORMAT)

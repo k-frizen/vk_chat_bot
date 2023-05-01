@@ -1,5 +1,5 @@
 from constants import CITIES_COMMAND, ROUTES_COMMAND, RESTART_COMMAND, TICKET_COMMAND, CITIES_LIST
-from generate_flights import Router
+from generate_flights import router
 
 DEFAULT_ANSWER = "Я могу помочь заказать билет. Введи /help для получения подробной информации или /ticket для заказа"
 
@@ -20,7 +20,7 @@ CITIES_COMMAND_TEXT = """{}\n\nЕсли хочешь заказать билет
 ROUTES_COMMAND_TEXT = '{}\n\nЕсли хочешь заказать билет, отправь команду /ticket.'.format(
     '\n'.join([' '.join([
         f'\nИз {departure}\nВ:', *arrival_list, '\n'
-    ]) for departure, arrival_list in Router().routes.items()])
+    ]) for departure, arrival_list in router.routes.items()])
 )
 
 # ORDERING WORDINGS

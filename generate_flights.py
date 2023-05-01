@@ -48,3 +48,6 @@ class Router:
                 dates_list.append(day)
 
         return schedule
+
+
+router = Router()
