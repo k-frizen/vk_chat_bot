@@ -4,29 +4,29 @@ from typing import Union
 
 from vk_api.keyboard import VkKeyboard
 
-from generate_flights import Router
-from generate_ticket import TicketMaker
-from keyboards import Keyboard
 from config import DATE_FORMAT
 from constants import *
+from generate_flights import Router
+from generate_ticket import TicketMaker
+from keyboards import keyboards
 from utils import get_commands_from_text, scenario_step_text, set_boarding_time, log
 
 
 def greeting(text: str, context: dict) -> VkKeyboard:
     step_text = scenario_step_text('Greeting', 'step1')
     buttoms_text = get_commands_from_text(step_text)
-    return Keyboard().set_keyboard_buttons(buttoms_text)
+    return keyboards.set_keyboard_buttons(buttoms_text)
 
 
 def help_handler(text: str, context: dict) -> VkKeyboard:
     step_text = scenario_step_text('Help', 'step1')
     buttoms_text = get_commands_from_text(step_text)
-    return Keyboard().set_keyboard_buttons(buttoms_text)
+    return keyboards.set_keyboard_buttons(buttoms_text)
 
 
 def departure(text: str, context: dict) -> VkKeyboard:
     """ step 1 """
-    return Keyboard().set_keyboard_buttons(CITIES_LIST)
+    return keyboards.set_keyboard_buttons(CITIES_LIST)
 
 
 def routes(text: str, context: dict) -> bool or VkKeyboard:
@@ -36,7 +36,8 @@ def routes(text: str, context: dict) -> bool or VkKeyboard:
         context[DEPARTURE_CITY] = city
 
         buttons = Router().routes[city]
-        return Keyboard().set_keyboard_buttons(buttons)
+        print(buttons)
+        return keyboards.set_keyboard_buttons(buttons)
     else:
         return False
 
@@ -68,7 +69,7 @@ def date_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     context[SCHEDULE] = schedule
 
     buttons = schedule[DATES]
-    return Keyboard().set_keyboard_buttons(buttons)
+    return keyboards.set_keyboard_buttons(buttons)
 
 
 def departure_date_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
@@ -76,7 +77,7 @@ def departure_date_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     if text in context[SCHEDULE][DATES]:
         context[DEPARTURE_DATE] = text
         departure_time: list = context[SCHEDULE][TIME]
-        return Keyboard().set_keyboard_buttons(departure_time)
+        return keyboards.set_keyboard_buttons(departure_time)
     else:
         return False
 
@@ -89,7 +90,7 @@ def departure_time_handler(text: str, context: dict):
         context[BOARDING_TIME] = set_boarding_time(context)
 
         buttons = tuple(range(1, 6))
-        return Keyboard().set_keyboard_buttons(buttons, one_line=True)
+        return keyboards.set_keyboard_buttons(buttons, one_line=True)
     else:
         return False
 
@@ -103,7 +104,7 @@ def count_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
         context[TICKET] = 'билет' if text == '1' else 'билетов' if text == '5' else 'билета'
 
         buttons = ('Продолжить', '/restart')
-        return Keyboard().set_keyboard_buttons(buttons)
+        return keyboards.set_keyboard_buttons(buttons)
 
     except ValueError:
         log.debug(f'incorrect data: {text} can not be a integer!')
@@ -116,7 +117,7 @@ def comment(text: str, context: dict) -> VkKeyboard:
     """ step 7 """
     context[COMMENT] = text if text != 'Продолжить' else ''
     buttons = ('Да', '/restart')
-    return Keyboard().set_keyboard_buttons(buttons)
+    return keyboards.set_keyboard_buttons(buttons)
 
 
 def data_correct(text: str, context: dict) -> bool:
@@ -130,7 +131,7 @@ def phone_handler(text: str, context: dict) -> Union[bool, VkKeyboard]:
     if phone:
         context[PHONE] = text if text.startswith('+') else f'+{text}'
         buttons = ('Продолжить', '/restart')
-        return Keyboard().set_keyboard_buttons(buttons)
+        return keyboards.set_keyboard_buttons(buttons)
     else:
         log.info(f'Incorrect phone number {text}')
         return False

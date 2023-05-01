@@ -10,7 +10,7 @@ from vk_api.keyboard import VkKeyboard
 import handlers
 from config import VK_BOT_TOKEN, GROUP_ID
 from constants import *
-from keyboards import Keyboard
+from keyboards import keyboards
 from models import UserState, Registration
 from scenarios import SCENARIOS
 from utils import get_commands_from_text, set_answer_to_user, user_state_exists, log, configure_logging
@@ -81,7 +81,7 @@ class Bot:
                 break
 
         else:
-            self.send_message(DEFAULT_ANSWER, user_id, keyboard=Keyboard().default_keyboard())
+            self.send_message(DEFAULT_ANSWER, user_id, keyboard=keyboards.default_keyboard())
 
     def send_message(self, answer: str, user_id: int, *, image: bytes = None, keyboard: str = '') -> None:
         """Обеспечивает отправку сообщения пользователю
@@ -136,7 +136,7 @@ class Bot:
                     keyboard = reply.get_keyboard()
             else:
                 answer = DEFAULT_ANSWER
-                keyboard = Keyboard().default_keyboard()
+                keyboard = keyboards.default_keyboard()
 
         self.send_message(answer, user_id, keyboard=keyboard)
 
@@ -201,7 +201,7 @@ class Bot:
         :param user_id: id пользователя (peer id)
         """
         if len(commands) != 1:
-            keyboard = Keyboard().set_keyboard_buttons(commands)
+            keyboard = keyboards.set_keyboard_buttons(commands)
             self.send_message(
                 answer=ONE_COMMAND_ONLY, user_id=user_id, keyboard=keyboard.get_keyboard()
             )
@@ -216,11 +216,11 @@ class Bot:
         elif command in (CITIES_COMMAND, ROUTES_COMMAND):
             text_to_send = set_answer_to_user(command)
             commands_from_text = get_commands_from_text(text_to_send)
-            keyboard = Keyboard().set_keyboard_buttons(commands_from_text)
+            keyboard = keyboards.set_keyboard_buttons(commands_from_text)
             self.send_message(text_to_send, user_id, keyboard=keyboard.get_keyboard())
 
         elif command == RESTART_COMMAND:
-            keyboard = Keyboard().default_keyboard()
+            keyboard = keyboards.default_keyboard()
             self.send_message(DEFAULT_ANSWER, user_id, keyboard=keyboard)
             user_state_exists(user_id)
 
