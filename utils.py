@@ -1,11 +1,11 @@
 import logging
 from datetime import datetime, timedelta
 
-from generate_flights import Router
+from config import TIME_FORMAT, DATE_TIME_FORMAT, DATE_FORMAT
+from constants import COMMANDS, TEXT, STEPS, DEPARTURE_DATE
 from models import UserState
 from scenarios import SCENARIOS
-from config import TIME_FORMAT, DATE_TIME_FORMAT, DATE_FORMAT
-from constants import CITIES_LIST, COMMANDS, TEXT, STEPS, DEPARTURE_DATE
+from wordings import CITIES_COMMAND_TEXT, ROUTES_COMMAND_TEXT
 
 log = logging.getLogger('bot')
 
@@ -32,19 +32,10 @@ def set_answer_to_user(command: str) -> str:
     match command:
 
         case '/cities':
-            return ('{}\n\nЕсли хочешь заказать билет, отправь команду /ticket .'
-                    'Введи команду /routes , чтобы узнать все обслуживаемые маршруты.').format(
-                '\n'.join(CITIES_LIST))
+            return CITIES_COMMAND_TEXT
 
         case '/routes':
-            answer = ''
-            for departure, arrival_list in Router().routes.items():
-                one_city_routes = [
-                    f'\nИз {departure}\n'
-                    'В:', *arrival_list, '\n'
-                ]
-                answer += ' '.join(one_city_routes)
-            return f'{answer}\n\n Если хочешь заказать билет, отправь команду /ticket .'
+            return ROUTES_COMMAND_TEXT
 
 
 def get_commands_from_text(text: str) -> tuple[str]:

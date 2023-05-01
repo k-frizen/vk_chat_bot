@@ -1,4 +1,5 @@
 from constants import CITIES_COMMAND, ROUTES_COMMAND, RESTART_COMMAND, TICKET_COMMAND, CITIES_LIST
+from generate_flights import Router
 
 DEFAULT_ANSWER = "Я могу помочь заказать билет. Введи /help для получения подробной информации или /ticket для заказа"
 
@@ -11,6 +12,16 @@ CAN_HANDLE_TEXT_ONLY = """Я могу обрабатывать только те
 HELP_MESSAGE = f"""Если хочешь узнать все обслуживаемые города, отправь команду {CITIES_COMMAND}.
 Выбери команду {ROUTES_COMMAND} чтобы узнать все возможные маршруты."""
 SELECT_ONE_COMMAND = 'Выбери одну из команд!'
+
+CITIES_COMMAND_TEXT = """{}\n\nЕсли хочешь заказать билет, отправь команду /ticket .
+Введи команду /routes , чтобы узнать все обслуживаемые маршруты.""".format(
+    '\n'.join(CITIES_LIST)
+)
+ROUTES_COMMAND_TEXT = '{}\n\nЕсли хочешь заказать билет, отправь команду /ticket.'.format(
+    '\n'.join([' '.join([
+        f'\nИз {departure}\nВ:', *arrival_list, '\n'
+    ]) for departure, arrival_list in Router().routes.items()])
+)
 
 # ORDERING WORDINGS
 ENTER_DEPARTURE_CITY = f"""Введи город отправления:\n\n
@@ -38,3 +49,7 @@ TRY_AGAIN = "Попробуй снова"
 RESTART_TO_CHANGE_DATA = 'Отправь /restart чтобы изменить данные начав сначала'
 CAN_NOT_HANDLE_THIS_TYPE = "Я не могу обрабатывать сообщения такого типа {}"
 ONE_COMMAND_ONLY = 'Отправь только одну команду!'
+
+
+if __name__ == '__main__':
+    print(ROUTES_COMMAND_TEXT)
