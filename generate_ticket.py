@@ -4,26 +4,27 @@ from PIL import Image, ImageDraw, ImageFont
 from PIL.ImageFont import FreeTypeFont
 
 from config import TICKET_TEMPLATE_PATH, FONT_PATH, FONT_SIZE_CITIES, FONT_SIZE
+from constants import *
 
 
 class TicketMaker:
     """Класс, отвечающий за генерацию изображения посадочного талона (билета) пассажира"""
 
     def __init__(self, template_path: str = TICKET_TEMPLATE_PATH):
-        self.base = Image.open(template_path).convert('RGBA')
-        self.draw = ImageDraw.Draw(self.base)
+        self.__base = Image.open(template_path).convert('RGBA')
+        self.__draw = ImageDraw.Draw(self.__base)
 
-    def write_text(self, coord: tuple, text: str,
-                   colour: tuple = (0, 0, 0, 255),  # black
-                   font: FreeTypeFont = ImageFont.truetype(FONT_PATH, FONT_SIZE)) -> None:
+    def _write_text(self, coord: tuple, text: str,
+                    color: tuple = (0, 0, 0, 255),  # black
+                    font: FreeTypeFont = ImageFont.truetype(FONT_PATH, FONT_SIZE)) -> None:
         """Наносит текст на изображение
 
         :param coord: координаты точки для нанесения текста
         :param text: текстовые данные
-        :param colour: цвет в формате RGBA
+        :param color: цвет в формате RGBA
         :param font: шрифт, который будет использоваться для нанесения информации
         """
-        self.draw.text(coord, text, font=font, fill=colour)
+        self.__draw.text(coord, text, font=font, fill=color)
 
     def generate_ticket(self, ticket_data: dict) -> bytes:
         """Создаёт посадочный талон, нанося на шаблон информацию о рейсе.
@@ -36,24 +37,24 @@ class TicketMaker:
         x3 = 1666
         cities_font = ImageFont.truetype(FONT_PATH, FONT_SIZE_CITIES)
 
-        self.write_text((x1, 400), ticket_data['departure_city'], font=cities_font)
-        self.write_text((x1, 520), ticket_data['destination_city'], font=cities_font)
-        self.write_text((x1, y1), ticket_data['name'])
+        self._write_text((x1, 400), ticket_data[DEPARTURE_CITY], font=cities_font)
+        self._write_text((x1, 520), ticket_data[DESTINATION_CITY], font=cities_font)
+        self._write_text((x1, y1), ticket_data[NAME])
 
-        self.write_text((x1, y2), ticket_data['departure_date'])
-        self.write_text((640, y2), ticket_data['departure_time'])
-        self.write_text((954, y2), ticket_data['boarding_time'])
-        self.write_text((x3, y2), ticket_data['gate'])
+        self._write_text((x1, y2), ticket_data[DEPARTURE_DATE])
+        self._write_text((640, y2), ticket_data[DEPARTURE_TIME])
+        self._write_text((954, y2), ticket_data[BOARDING_TIME])
+        self._write_text((x3, y2), ticket_data[GATE])
 
-        self.write_text((x3, y1), ticket_data['seat'])
-        self.write_text((x3, 570), ticket_data['flight_number'])
+        self._write_text((x3, y1), ticket_data[SEAT])
+        self._write_text((x3, 570), ticket_data[FLIGHT_NUMBER])
 
-        return self.create_ticket_bytes()
+        return self._create_ticket_bytes()
 
-    def create_ticket_bytes(self) -> bytes:
+    def _create_ticket_bytes(self) -> bytes:
         """Возвращает билет в байтовом представлении"""
-        self.base.seek(0)
-        roiImg = self.base.crop()
+        self.__base.seek(0)
+        roiImg = self.__base.crop()
         imgByteArr = BytesIO()
         roiImg.save(imgByteArr, format='PNG')
         ticket_as_bytes = imgByteArr.getvalue()
