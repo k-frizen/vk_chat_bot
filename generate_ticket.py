@@ -13,18 +13,18 @@ class TicketMaker:
     def __init__(self, template_path: str = TICKET_TEMPLATE_PATH):
         self.__base: Image.Image = Image.open(template_path).convert('RGBA')
         self.__draw: ImageDraw.ImageDraw = ImageDraw.Draw(self.__base)
-        self._font: FreeTypeFont = ImageFont.truetype(FONT_PATH, FONT_SIZE)
 
     def _write_text(self, coord: tuple, text: str,
                     color: tuple = (0, 0, 0, 255),  # black
-                    ) -> None:
+                    font: FreeTypeFont = ImageFont.truetype(FONT_PATH, FONT_SIZE)) -> None:
         """Наносит текст на изображение
 
         :param coord: координаты точки для нанесения текста
         :param text: текстовые данные
         :param color: цвет в формате RGBA
+        :param font: шрифт, который будет использоваться для нанесения информации
         """
-        self.__draw.text(coord, text, font=self._font, fill=color)
+        self.__draw.text(coord, text, font=font, fill=color)
 
     def generate_ticket(self, ticket_data: dict) -> bytes:
         """Создаёт посадочный талон, нанося на шаблон информацию о рейсе.
