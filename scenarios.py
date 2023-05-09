@@ -3,7 +3,7 @@ from constants import *
 from wordings import *
 
 SCENARIOS = {
-    'Greeting': {
+    GREETING_FLOW: {
         FIRST_STEP: 'step1',
         STEPS: {
             'step1': {
@@ -14,7 +14,7 @@ SCENARIOS = {
             },
         }
     },
-    'Help': {
+    HELP_FLOW: {
         FIRST_STEP: 'step1',
         STEPS: {
             'step1': {
@@ -25,7 +25,7 @@ SCENARIOS = {
             },
         }
     },
-    'Ordering': {
+    ORDERING_FLOW: {
         FIRST_STEP: 'step1',
         STEPS: {
             'step1': {

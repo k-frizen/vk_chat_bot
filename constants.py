@@ -18,7 +18,7 @@ ROUTES_COMMAND, RESTART_COMMAND = '/routes', '/restart'
 COMMANDS = TICKET_COMMAND, HELP_COMMAND, CITIES_COMMAND, ROUTES_COMMAND, RESTART_COMMAND
 
 # SCENARIOS NAMES
-HELP_FLOW, ORDERING_FLOW = 'Help', 'Ordering'
+HELP_FLOW, ORDERING_FLOW, GREETING_FLOW = 'Help', 'Ordering', 'Greeting'
 
 # CONTEXT VARIABLES
 DEPARTURE_CITY, DESTINATION_CITY = 'departure_city', 'destination_city'
@@ -34,13 +34,13 @@ INTENTS = [
     {
         'name': 'Order ticket',
         'tokens': ('заказ', 'купить', 'найти', 'полёт'),
-        'scenario': 'Ordering',
+        'scenario': ORDERING_FLOW,
         'answer': None
     },
     {
-        'name': 'Greeting',
+        'name': GREETING_FLOW,
         'tokens': ('hi', 'hello', 'здравствуй', 'прив'),
-        'scenario': 'Greeting',
+        'scenario': GREETING_FLOW,
         'answer': None
     }
 ]

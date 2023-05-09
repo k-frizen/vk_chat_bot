@@ -58,7 +58,7 @@ INPUTS = [
 ]
 
 EXCEPTED_OUTPUTS = [
-    scenario_step_text('Greeting', 'step1').format(**context),  # 0
+    scenario_step_text(GREETING_FLOW, 'step1').format(**context),  # 0
     scenario_step_text(HELP_FLOW, 'step1'),  # 1
     set_answer_to_user(INPUTS[2]),  # 2
     set_answer_to_user(INPUTS[3]),  # 3

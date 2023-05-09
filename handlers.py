@@ -13,7 +13,7 @@ from utils import get_commands_from_text, scenario_step_text, set_boarding_time,
 
 
 def greeting(text: str, context: dict) -> VkKeyboard:
-    step_text = scenario_step_text('Greeting', 'step1')
+    step_text = scenario_step_text(GREETING_FLOW, 'step1')
     buttoms_text = get_commands_from_text(step_text)
     return keyboards.set_keyboard_buttons(buttoms_text)
 
